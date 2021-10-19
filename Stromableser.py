@@ -48,7 +48,7 @@ def ledOn(on):
     """ switch led on or off with tasmota mqtt commands """
     client = mqtt.Client()
     try:
-        client.connect('job4', 1883)
+        client.connect('localhost', 1883)
     except:
         eprint(datetime.now(), "MQTT connect failed")
         return
