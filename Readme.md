@@ -25,6 +25,8 @@ liest Stromverbrauch vom alten ENBW Zähler per ESP32-Cam.
     * python
     * urllib
 
+![boxes](https://user-images.githubusercontent.com/32450554/137973442-e5cee27e-5d02-4737-8b47-528c8889a7fb.jpg)
+
 Starten z.B. in einer screen session
     conda activate ocv-cam
     python Stromableser.py
