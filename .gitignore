@@ -1,0 +1,8 @@
+*.jpg
+imgs
+snapshots
+.ipynb_checkpoints/
+.vscode/
+__pycache__/
+digits-0-9.npz
+digits-new.npz
