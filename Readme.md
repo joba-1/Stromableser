@@ -33,6 +33,7 @@ liest Stromverbrauch vom alten ENBW Zähler per ESP32-Cam.
     * paho-mqtt
     * python
     * urllib
+
 Starten
 * manuell in einer screen session
     ```
