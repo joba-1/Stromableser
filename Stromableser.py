@@ -70,7 +70,7 @@ def aquireGrayscaleImage(url):
 
     try:
         req = ul.request.urlopen(url)
-    except urllib.error.URLError as e:
+    except ul.error.URLError as e:
         eprint(datetime.now(), e.__dict__)
         return None
     
@@ -248,6 +248,7 @@ def getValue(digitPatterns):
     contour = findLargestSquare(edges)
 
     if contour is None:
+        eprint(datetime.now(), f"no contours on image")
         cv2.imwrite('image.jpg', img)
         cv2.imwrite('edges.jpg', edges)
         return -1
@@ -274,16 +275,18 @@ def validValue(num):
     global lastValue
 
     # failed reading or same reading
-    if num < 0 or num == lastValue: return False 
-
+    if num < 0:
+        return False
+    
     # never validated before or reading went down or reading went up more than 1kWh 
-    if (lastValue == 0) or (num < lastValue) or (num > (lastValue + 10)):
-        if lastValue == 0:
-            print(datetime.now(), f"init {num/10:.1f} kW")
-            lastValue = num - 1
-        else:
-            eprint(datetime.now(), f"suspicious {num/10:.1f} kW")
-            lastValue = num
+    if lastValue == 0:
+        print(datetime.now(), f"init {num/10:.1f} kW")
+        lastValue = num - 1
+        return False
+    
+    if (num < lastValue) or (num > (lastValue + 10)):
+        eprint(datetime.now(), f"suspicious {num/10:.1f} kW")
+        lastValue = num
         return False
   
     lastValue = num
