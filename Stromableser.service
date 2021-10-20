@@ -1,0 +1,13 @@
+[Unit]
+Description=Stromableser
+
+[Service]
+Type=forking
+User=joachim
+ExecStart=/usr/bin/screen -d -m -S Stromableser -h 10000 -L -Logfile /var/log/ocv-cam/Stromableser.log /usr/local/ocv-cam/Stromableser.sh
+Restart=always
+RestartSec=3
+
+
+[Install]
+WantedBy=multi-user.target
