@@ -14,7 +14,10 @@ liest Stromverbrauch vom alten ENBW Zähler per ESP32-Cam.
 * Kamera so positionieren, dass LED Reflektionen minimiert werden
     * bei mir unten rechts mit ca. 4cm Abstand
     * siehe FreeCAD Konstruktion mit STL (hält mit Magnet)
-* Bild wird mit OpenCV (Python) analysiert
+* Bild wird mit OpenCV (Python) analysiert (ggf. anpassen)
+    * Größte Box-Kontour im Bild wird zum gerade richten verwendet
+    * Code geht von 6-Digits rechts in der Box-Kontur und etwas abgesetzter Kommastelle rechts von der Box aus
+    * Ziffern-Vorlagen sind in digits.npz (ggf. anpassen -> siehe Stromableser.ipynb)
 * Zählerstand wird an Influx Datenbank power übermittelt
     * Datenbank power muss vorher angelegt werden
     * ```influx> create database power```
@@ -30,9 +33,12 @@ liest Stromverbrauch vom alten ENBW Zähler per ESP32-Cam.
     * urllib
 Starten
 * manuell in einer screen session
+    ```
     conda activate ocv-cam
     python Stromableser.py
-* automatisch mit dem Skript und dem Service (ggf. im Service den User anpassen)
+    ```
+* automatisch mit dem Skript und dem Service (ggf. im Service den User anpassen) 
+    ```
     conda init
     sudo mkdir -p /var/log/ocv-cam /usr/local/ocv-cam
     sudo chown $USER /var/log/ocv-cam /usr/local/ocv-cam
@@ -40,7 +46,7 @@ Starten
     sudo cp -a Stromableser.service /etc/systemd/system/
     sudo systemctl daemon-reload
     sudo systemctl start Stromableser
-
+    ```
 Influx und MQTT auf localhost (oder Code anpassen...)
 
 Viel Spaß!
