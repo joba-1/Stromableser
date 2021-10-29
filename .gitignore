@@ -6,3 +6,4 @@ snapshots
 __pycache__/
 digits-0-9.npz
 digits-new.npz
+*.bak

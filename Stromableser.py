@@ -12,7 +12,7 @@ area_blurr,  area_low,  area_ratio  = 3, 40, 5
 digit_blurr, digit_low, digit_ratio = 3, 15, 15
 
 # minimum similarity for best match
-minSimilarity = 0.75
+minSimilarity = 0.78
 
 # last value, used for sanity check
 lastValue = 0
@@ -189,7 +189,7 @@ def findDigits(img, blurr, low, ratio, patterns, boxes=None):
         for cnt in contours:
             bx, by, bw, bh = cv2.boundingRect(cnt)
             box = np.array([[bx, by], [bx + bw, by], [bx + bw, by + bh], [bx, by + bh]])
-            if bw / h > 0.11 and bw / h < 0.33 and bh / h > 0.40 and bh / h < 0.55:
+            if bw / h > 0.11 and bw / h < 0.35 and bh / h > 0.38 and bh / h < 0.55:
                 if not d in digitDict:
                     if 2 * bh > h:
                         bh = h // 2  # cap to max height of digits
@@ -255,6 +255,12 @@ def getValue(digitPatterns):
 
     counter = undoPerspectiveDistortion(img, contour)
     boxes = cv2.cvtColor(counter, cv2.COLOR_GRAY2BGR)
+
+    # remove fine horizontal reflection lines
+    width = 7
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (width, width))
+    counter = cv2.morphologyEx(counter, cv2.MORPH_OPEN, kernel)
+
     digits, imgs = findDigits(counter, digit_blurr, digit_low, digit_ratio, digitPatterns, boxes=boxes)
     num = numberFromDigits(digits)
 
@@ -263,6 +269,7 @@ def getValue(digitPatterns):
         cv2.imwrite('image.jpg', img)
         cv2.imwrite('edges.jpg', edges)
         cv2.imwrite('counter.jpg', counter)
+        boxes = cv2.cvtColor(boxes, cv2.COLOR_BGR2RGB)
         cv2.imwrite('boxes.jpg', boxes)
         for i in imgs:
             cv2.imwrite(f'digit_{i}.jpg', imgs[i])
@@ -278,15 +285,15 @@ def validValue(num):
     if num < 0:
         return False
     
-    # never validated before or reading went down or reading went up more than 1kWh 
+    # never validated before
     if lastValue == 0:
         print(datetime.now(), f"init {num/10:.1f} kW")
         lastValue = num - 1
         return False
     
+    # reading went down or reading went up more than 1kWh
     if (num < lastValue) or (num > (lastValue + 10)):
         eprint(datetime.now(), f"suspicious {num/10:.1f} kW")
-        lastValue = num
         return False
   
     lastValue = num
@@ -312,6 +319,7 @@ def postValue(num):
 
 
 def main():
+    print(datetime.now(), "Starting V1")
     digits = readPatterns()
     while True:
         num =  getValue(digits)
